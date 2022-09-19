@@ -1,0 +1,36 @@
+.social-auth {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.social-auth .social-network {
+  width: 44%;
+  margin: 8px;
+  padding: 12px 24px 12px 12px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease 0s, color;
+  border-width: initial;
+  border-color: initial;
+  border-radius: 2px;
+  border-image: initial;
+  box-shadow: 0 1px 4px rgba(26, 25, 43, 0.24) !important;
+}
+.social-auth .auth-link {
+  text-decoration: none;
+  color: #4a495e;
+  font-family: Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+}
+.social-auth .auth-link:hover,
+.social-auth .auth-link:active,
+.social-auth .auth-link:focus {
+  color: #145cc6;
+}
+.social-auth .auth-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 16px;
+}

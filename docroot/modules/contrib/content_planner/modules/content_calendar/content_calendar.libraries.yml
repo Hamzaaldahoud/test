@@ -1,0 +1,20 @@
+calendar:
+  version: 1.0
+  css:
+    theme:
+      assets/dist/css/calendar.css: {}
+  js:
+    assets/dist/js/calendar.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - content_planner/drag_and_drop
+
+gin:
+  version: 1.0
+  css:
+    theme:
+      assets/dist/css/gin.css: {}
+  dependencies:
+    - content_calendar/calendar

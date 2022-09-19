@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - entity_embed
+    - jsonapi_defaults
+third_party_settings:
+  jsonapi_defaults:
+    page_limit: 50
+id: entity_embed_fake_entity--entity_embed_fake_entity
+disabled: true
+path: entity_embed_fake_entity/entity_embed_fake_entity
+resourceType: entity_embed_fake_entity--entity_embed_fake_entity
+resourceFields: ""

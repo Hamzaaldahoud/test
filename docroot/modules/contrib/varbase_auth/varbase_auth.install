@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the varbase auth module.
+ */
+
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_auth_install() {
+
+  // Processer for install: in varbase_auth.info.yml file.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_auth');
+
+}
+
+/**
+ * Issue #3266209: Remove the left over after installation of additional modules.
+ *
+ * For Social Auth and fullback to the Social Auth and its extra modules.
+ * To manage the installation and change of configs.
+ */
+function varbase_auth_update_90001() {
+  \Drupal::configFactory()->getEditable('simple.settings')->delete();
+}

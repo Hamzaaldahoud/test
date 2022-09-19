@@ -1,0 +1,73 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a bootstrap columns layout.
+ *
+ * Available variables:
+ * - content: The content for this layout.
+ * - attributes: HTML attributes for the layout <div>.
+ *
+ * @ingroup themeable
+ */
+#}
+{% if content %}
+
+  {% set gutters_between_on = content['#settings']['remove_gutters'] == 1 and content['#settings']['gutters_between'] == 1 %}
+  {% set gutters_between_off = content['#settings']['remove_gutters'] == 1 and content['#settings']['gutters_between'] == 0 %}
+  {% set horizontal_alignment_classes = content['#settings']['container_wrapper']['bootstrap_styles']['horizontal_alignment']['class'] %}
+  {% set vertical_alignment_classes = content['#settings']['container_wrapper']['bootstrap_styles']['vertical_alignment']['class'] %}
+  {% set has_container_width = content['#settings']['container_width_classes'] ? 1 : 0 %}
+
+  {% set classes = [
+    'layout',
+    'row',
+    gutters_between_off and has_container_width == 0 ? 'no-gutters gx-0' : '',
+    horizontal_alignment_classes ? horizontal_alignment_classes : '',
+    vertical_alignment_classes ? vertical_alignment_classes : '',
+    'layout-builder__layout'
+  ] %}
+
+  {% if content['section_header']|render|striptags %}
+  <div class="vlb-section-header row">
+    <div {{ region_attributes['section_header'] }}>
+      {{ content['section_header'] }}
+    </div>
+  </div>
+  {% endif %}
+  <div {{ attributes.addClass(classes) }}>
+
+    {% if has_container_width %}
+
+      {% set container_width_attributes = create_attribute() %}
+      {% set container_width_attributes = container_width_attributes.addClass(content['#settings']['container_width_classes']) %}
+
+      {% set container_width_row_attributes = create_attribute() %}
+      {% set container_width_row_attributes = container_width_row_attributes.addClass('row') %}
+
+      {% if vertical_alignment_classes %}
+        {% set container_width_row_attributes = container_width_row_attributes.addClass(vertical_alignment_classes) %}
+      {% endif %}
+
+      <div {{ container_width_attributes }}>
+        <div {{ container_width_row_attributes }}>
+    {% endif %}
+
+    {{ title_prefix }}
+    {% for i in 1..12 %}
+      {% set region = "blb_region_col_" ~ i %}
+      {% if content[region] %}
+        <div {{ region_attributes[region] }}>
+          {{ content[region] }}
+        </div>
+      {% endif %}
+    {% endfor %}
+    {{ title_suffix }}
+
+    {% if has_container_width %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+{% endif %}

@@ -1,0 +1,296 @@
+<?php
+
+/**
+ * @file
+ * Contains varbase_layout_builder.module.
+ */
+
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
+use Drupal\varbase_layout_builder\Element\VarbaseLayoutBuilderUX;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function varbase_layout_builder_entity_operation(EntityInterface $entity) {
+  $account = \Drupal::currentUser();
+  $entity_type_id = $entity->getEntityTypeId();
+
+  $route_name = "layout_builder.overrides.$entity_type_id.view";
+  $route_parameters = [
+    $entity_type_id => $entity->id(),
+  ];
+
+  // If current user has access to route, then add the operation link. The
+  // access check will only return TRUE if the bundle is Layout Builder-
+  // enabled, overrides are allowed, and user has necessary permissions.
+  $access_manager = \Drupal::service('access_manager');
+  if (!$access_manager->checkNamedRoute($route_name, $route_parameters, $account)) {
+    return;
+  }
+
+  $operations['layout'] = [
+    'title' => t('Layout'),
+    'url' => Url::fromRoute($route_name, $route_parameters),
+    'weight' => 50,
+  ];
+  return $operations;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function varbase_layout_builder_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // Only for layout builder forms.
+  if (isset($form_id) && strpos($form_id, '_layout_builder_form') !== FALSE) {
+
+    // Attache the Varbase Layout Builder enhancements libraray.
+    $form['#attached']['library'][] = 'varbase_layout_builder/enhancements';
+
+    // Attache the Varbase Layout Builder configure section admin libraray.
+    $form['#attached']['library'][] = 'varbase_layout_builder/configure-section.admin';
+
+    // No revision information or revision log message.
+    if (isset($form['revision_information'])) {
+      $form['revision_information']['#disabled'] = TRUE;
+      $form['revision_information']['#attributes']['style'][] = 'display: none;';
+      $form['revision_information']['#prefix'] = '<div style="display: none;">';
+      $form['revision_information']['#suffix'] = '</div>';
+    }
+
+    // Hide revision.
+    if (isset($form['revision'])) {
+      $form['revision']['#default_value'] = TRUE;
+      $form['revision']['#disabled'] = TRUE;
+      $form['revision']['#attributes']['style'][] = 'display:none;';
+    }
+
+    // Hide revision log message.
+    if (isset($form['revision_log_message'])) {
+      $form['revision_log_message']['#disabled'] = TRUE;
+      $form['revision_log_message']['#attributes']['style'][] = 'display:none;';
+    }
+
+    // Hide rabbit hole fields.
+    if (isset($form['rabbit_hole'])) {
+      $form['rabbit_hole']['#access'] = FALSE;
+    }
+  }
+
+  $current_path = \Drupal::service('path.current')->getPath();
+  $url_object = \Drupal::service('path.validator')->getUrlIfValid($current_path);
+  $route_name = '';
+  if (isset($url_object) && is_object($url_object)) {
+    $route_name = $url_object->getRouteName();
+  }
+
+  $applicable_forms = [
+    'layout_builder_add_block',
+    'layout_builder_update_block',
+    'media_image_edit_form',
+  ];
+
+  if (in_array($form_id, $applicable_forms)
+    || $route_name === 'layout_builder.overrides.node.view') {
+
+    if ($form_id !== 'layout_builder_configure_section') {
+      $config = \Drupal::config('varbase_layout_builder.settings');
+      $use_claro = $config->get('use_claro');
+
+      if (isset($use_claro) && $use_claro == 1
+        && !version_compare(\Drupal::VERSION, '8.8.0', 'lt')) {
+
+        if (\Drupal::service('theme_handler')->themeExists('claro')) {
+          // Add claro theme libraries.
+          $form['#attached']['library'][] = 'varbase_layout_builder/claro';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for node_form.
+ */
+function varbase_layout_builder_form_node_form_alter(&$form, FormStateInterface $form_state) {
+
+  if (isset($form['actions'])) {
+    $actions_array_keys = array_keys($form['actions']);
+    foreach ($actions_array_keys as $action) {
+      if ($action != 'preview'
+          && isset($form['actions'][$action]['#type'])
+          && $form['actions'][$action]['#type'] === 'submit') {
+
+        $form['actions'][$action]['#submit'][] = '_varbase_layout_builder_form_node_form_submit';
+      }
+    }
+  }
+}
+
+/**
+ * Process the Varbase Layout Builder form node form submit.
+ *
+ * @param array $form
+ *   The form object.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form status.
+ */
+function _varbase_layout_builder_form_node_form_submit(array &$form, FormStateInterface $form_state) {
+
+  $node = $form_state->getFormObject()->getEntity();
+  $node_type_display = \Drupal::service('entity_display.repository')->getViewDisplay('node', $node->bundle(), 'default');
+
+  // Only When submitted after a new creation of a node with which it's
+  // content type has an enabled layout builder on it's default display.
+  if (!($form_state->getFormObject()->getOperation() === 'edit')
+      && !empty($node_type_display)
+      && $node_type_display->isLayoutBuilderEnabled()) {
+
+    // Check if layout selection is not none.
+    $layout_selection_is_none = TRUE;
+    $layout_selection_value = $form_state->getValue('layout_selection');
+    if (is_array($layout_selection_value)
+        && isset($layout_selection_value[0])
+        && $layout_selection_value[0]['target_id']
+        && !empty($layout_selection_value[0]['target_id'])) {
+      $layout_selection_is_none = FALSE;
+    }
+
+    // Get a valid edit layout url.
+    $edit_layout_url = \Drupal::pathValidator()->getUrlIfValid('node/' . $node->id() . '/layout');
+
+    // Have the permission name to change the layout for this content type.
+    $bundle_permission_name = 'configure all ' . $node->bundle() . ' node layout overrides';
+    $user = \Drupal::currentUser();
+    $user_has_permission_to_manage_the_layout = ($user->hasPermission('configure any layout') || $user->hasPermission($bundle_permission_name));
+
+    if (!empty($edit_layout_url)
+        && $layout_selection_is_none
+        && $user_has_permission_to_manage_the_layout) {
+
+      // Remove destination if we do have it before we create the node.
+      $request = \Drupal::request();
+      if ($request->query->has('destination')) {
+        $request->query->remove('destination');
+      }
+
+      $form_state->setRedirectUrl($edit_layout_url);
+    }
+  }
+}
+
+/**
+ * Implements hook_element_plugin_alter().
+ */
+function varbase_layout_builder_element_plugin_alter(array &$definitions) {
+  $definitions['layout_builder']['class'] = VarbaseLayoutBuilderUX::class;
+}
+
+/**
+ * Implements hook_layout_alter().
+ */
+function varbase_layout_builder_layout_alter(&$definitions) {
+
+  foreach ($definitions as $key => $definition) {
+    if ($definition->getClass() === 'Drupal\bootstrap_layout_builder\Plugin\Layout\BootstrapLayout') {
+      $definitions[$key]->setClass('\Drupal\varbase_layout_builder\Plugin\Layout\VarbaseLayoutBuilderBootstrapLayout');
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function varbase_layout_builder_preprocess_blb_container_wrapper(&$variables) {
+  $variables['attributes']['class'][] = 'vlb-section';
+}
+
+/**
+ * Implements hook_theme().
+ */
+function varbase_layout_builder_theme() {
+  return [
+    'blb_container_wrapper' => [
+      'template' => 'vlb-container-wrapper',
+      'variables' => [
+        'attributes' => [],
+        'children' => [],
+      ],
+    ],
+    'blb_container' => [
+      'template' => 'vlb-container',
+      'variables' => [
+        'attributes' => [],
+        'children' => [],
+      ],
+    ],
+    'blb_section' => [
+      'template' => 'vlb-section',
+      'render element' => 'content',
+      'base hook' => 'layout',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function varbase_layout_builder_preprocess_blb_section(&$variables) {
+
+  if (isset($variables['content']['section_header']['#attributes'])) {
+    $variables['region_attributes']['section_header'] = new Attribute($variables['content']['section_header']['#attributes']);
+  }
+
+  if (isset($variables['content']['#settings']['container_width'])
+   && $variables['content']['#settings']['container_width'] !== '') {
+
+    // VLB layout defaults.
+    $vlb_layout_defaults = \Drupal::config('varbase_layout_builder.layout_defaults');
+
+    // Container width layout configs.
+    $container_width_layout_options = $vlb_layout_defaults->get('container_width');
+    $container_widths = [];
+    if (isset($container_width_layout_options['build_options'])) {
+      $container_widths = $container_width_layout_options['build_options'];
+    }
+
+    if (isset($container_widths[$variables['content']['#settings']['container_width']])) {
+      $variables['content']['#settings']['container_width_classes'] = $container_widths[$variables['content']['#settings']['container_width']];
+    }
+
+  }
+}
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function varbase_layout_builder_library_info_alter(&$libraries, $extension) {
+
+  if ($extension == 'bootstrap_styles'
+    && isset($libraries['plugin.scroll_effects.build'])) {
+    $libraries['plugin.scroll_effects.build'] = ['dependencies' => ['varbase_layout_builder/aso.local']];
+  }
+  elseif ($extension == 'bootstrap_layout_builder'
+     && isset($libraries['layout_builder_form_style'])) {
+
+    $new_path = '/' . drupal_get_path('module', 'varbase_layout_builder') . '/js';
+    $new_js = [];
+    $replacements = [
+      'js/layout-tab-scripts.js' => $new_path . '/vlb-layout-tab-scripts.js',
+    ];
+
+    foreach ($libraries['layout_builder_form_style']['js'] as $source => $options) {
+      if (isset($replacements[$source])) {
+        $new_js[$replacements[$source]] = $options;
+      }
+      else {
+        $new_js[$source] = $options;
+      }
+    }
+
+    $libraries['layout_builder_form_style']['js'] = $new_js;
+  }
+}

@@ -1,0 +1,6 @@
+.git/
+nbproject/
+vendor/
+build/
+**/*.cache
+**/composer.lock

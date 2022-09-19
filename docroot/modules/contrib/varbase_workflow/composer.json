@@ -1,0 +1,57 @@
+{
+  "name": "drupal/varbase_workflow",
+  "description": "Provides a toolkit for robust, quick, and enterprise content moderation features.",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/varbase_workflow",
+  "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Vardot",
+      "homepage": "https://www.drupal.org/vardot",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/varbase_workflow",
+    "source": "http://cgit.drupalcode.org/varbase_workflow"
+  },
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+      },
+    "assets": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  },
+  "require": {
+    "composer/installers": "~2.0",
+    "oomphinc/composer-installers-extender": "~2.0",
+    "cweagans/composer-patches": "~1.0",
+    "drupal/core": "~9.0 || ~10.0",
+    "vardot/entity-definition-update-manager": "~1.0",
+    "vardot/module-installer-factory": "~1.0",
+    "drupal/moderation_sidebar": "1.5",
+    "drupal/content_planner": "~1.0",
+    "drupal/scheduler": "~1.0",
+    "drupal/content_moderation_notifications": "~3.0",
+    "drupal/scheduler_content_moderation_integration": "~1.0",
+    "drupal/admin_audit_trail": "~1.0"
+  },
+  "extra": {
+    "installer-types": [
+      "bower-asset",
+      "npm-asset"
+    ],
+    "enable-patching": true,
+    "composer-exit-on-patch-failure": true,
+    "patches": {
+      "drupal/moderation_sidebar": {
+        "Issue #3264639: Fix can not preview a new node":
+        "https://www.drupal.org/files/issues/2022-02-16/preview-new-node-3264639-2.patch"
+      }
+    }
+  }
+}

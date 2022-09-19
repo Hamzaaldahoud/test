@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update for Varbase Style guide module.
+ */
+
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_styleguide_install() {
+
+  // Processer for install: in varbase_admin.info.yml file using ModuleInstallerFactory.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_styleguide');
+
+}
+
+/**
+ * Issue #3272300: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Style Guide module.
+ */
+function varbase_styleguide_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_styleguide');
+}

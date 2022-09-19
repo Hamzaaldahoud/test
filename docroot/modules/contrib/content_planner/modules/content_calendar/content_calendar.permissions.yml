@@ -1,0 +1,19 @@
+view content calendar:
+  title: 'View Content Calendar'
+  description: 'View Content Calendar'
+  restrict access: TRUE
+
+manage content calendar:
+  title: 'Manage and View Content Calendar'
+  description: 'Allow role to edit all content in Content Calendar'
+  restrict access: TRUE
+
+manage own content calendar:
+  title: 'Manage Own Content Calendar'
+  description: 'Allow role to edit own content in Content Calendar'
+  restrict access: TRUE
+
+administer content calendar settings:
+  title: 'Administer Content Calendar settings'
+  description: 'Administer Content Calendar settings'
+  restrict access: TRUE

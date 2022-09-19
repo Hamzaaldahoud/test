@@ -1,0 +1,8 @@
+**/*.min.js
+**/gulpfile.js
+**/node_modules
+behat.yml
+behat.varbase.yml
+drupalci.yml
+**/drupalci.yml
+**/libraries/

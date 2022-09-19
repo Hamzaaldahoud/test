@@ -1,0 +1,120 @@
+<?php
+
+/**
+ * @file
+ * Module file.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\paragraphs\ParagraphInterface;
+
+/**
+ * Implements hook_field_formatter_info_alter().
+ */
+function paragraphs_asymmetric_translation_widgets_field_widget_info_alter(&$info) {
+  if (!empty($info['paragraphs'])) {
+    $info['paragraphs']['class'] = 'Drupal\paragraphs_asymmetric_translation_widgets\Plugin\Field\FieldWidget\ParagraphsAsymmetricWidget';
+  }
+}
+
+/**
+ * Implements hook_entity_translation_create().
+ *
+ * Assume that a translatable paragraphs field will hold async content. So we
+ * will need to recursively duplicate all paragraphs when the translation object
+ * is created.
+ */
+function paragraphs_asymmetric_translation_widgets_entity_translation_create(EntityInterface $entity) {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $paragraph_storage = $entity_type_manager->getStorage('paragraph');
+  /** @var \Drupal\field\FieldConfigInterface[] $field_definitions */
+  $field_definitions = $entity_type_manager->getStorage('field_config')
+    ->loadByProperties([
+      'entity_type' => $entity->getEntityTypeId(),
+      'bundle' => $entity->bundle(),
+      'field_type' => 'entity_reference_revisions',
+    ]);
+
+
+  foreach ($field_definitions as $field_definition) {
+    if ($field_definition->isTranslatable() === FALSE) {
+      continue;
+    }
+    if ($field_definition->getFieldStorageDefinition()->getSetting('target_type') !== 'paragraph') {
+      continue;
+    }
+
+    $async_values = [];
+    $values = $entity->get($field_definition->getName())->getValue();
+    if (!empty($values) && is_array($values)) {
+      foreach ($values as $value) {
+        if (isset($value['entity'])) {
+          $paragraph = $value['entity'];
+        }
+        elseif (isset($value['target_revision_id'])) {
+          $paragraph = $paragraph_storage->loadRevision($value['target_revision_id']);
+        }
+        elseif (isset($value['target_id'])) {
+          $paragraph = $paragraph_storage->load($value['target_id']);
+        }
+
+        if ($paragraph instanceof ParagraphInterface) {
+          $duplicate = $paragraph->createDuplicate();
+
+          // Clone all sub-paragraphs recursively.
+          paragraphs_asymmetric_translation_widgets_entity_translation_create($duplicate);
+
+          $async_values[] = ['entity' => $duplicate];
+        }
+      }
+      $entity->set($field_definition->getName(), $async_values);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_translation_delete().
+ *
+ * Assume that a translatable paragraphs field will hold async content. So we
+ * will need to delete all paragraphs when the translation object is deleted.
+ */
+function paragraphs_asymmetric_translation_widgets_entity_translation_delete(EntityInterface $entity) {
+  // Fetch all paragraphs fields for this entity type that are translatable.
+  $translatable_fields = [];
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_definitions = $entity_type_manager->getStorage('field_config')
+    ->loadByProperties([
+      'entity_type' => $entity->getEntityTypeId(),
+      'bundle' => $entity->bundle(),
+      'field_type' => 'entity_reference_revisions',
+    ]);
+  foreach ($field_definitions as $field_definition) {
+    if ($field_definition->isTranslatable() === FALSE) {
+      continue;
+    }
+    if ($field_definition->getFieldStorageDefinition()->getSetting('target_type') !== 'paragraph') {
+      continue;
+    }
+    $translatable_fields[] = $field_definition->getName();
+  }
+  if (empty($translatable_fields)) {
+    return;
+  }
+
+  // Delete all paragraphs belonging to this entity and a paragraphs field that
+  // is translatable.
+  $query = \Drupal::entityQuery('paragraph')
+    ->condition('langcode', $entity->language()->getId())
+    ->condition('parent_id', $entity->id())
+    ->condition('parent_type', $entity->getEntityTypeId())
+    ->condition('parent_field_name', $translatable_fields, 'IN');
+
+  $results = $query->execute();
+  if (!empty($results) && is_array($results)) {
+    $paragraph_storage = $entity_type_manager->getStorage('paragraph');
+    $paragraphs = $paragraph_storage->loadMultiple($results);
+    foreach ($paragraphs as $paragraph) {
+      $paragraph->delete();
+    }
+  }
+}

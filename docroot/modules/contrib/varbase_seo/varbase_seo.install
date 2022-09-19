@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Varbase SEO module.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_seo_install() {
+
+  // Processer for install: in varbase_admin.info.yml file using ModuleInstallerFactory.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_seo');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_seo', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_seo', '/^.*(settings.yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_seo', '/^metatag.metatag_defaults.*\\.(yml)$/i');
+
+  // If the google analytics module were enabled we load the custom GA settings.
+  if (\Drupal::moduleHandler()->moduleExists('google_analytics')) {
+
+    // Varbase SEO custom google analytics config settings.
+    $google_analytics_managed_optional_configs = [
+      'google_analytics.settings',
+    ];
+    ModuleInstallerFactory::importConfigsFromList('varbase_seo', $google_analytics_managed_optional_configs, 'config/managed/google_analytics');
+  }
+
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+  // Have forced configs import after the entity and definitions updates.
+  $forced_configs_import_after_entity_updates = [
+    'views.view.redirect_404',
+  ];
+  ModuleInstallerFactory::importConfigsFromList('varbase_seo', $forced_configs_import_after_entity_updates);
+
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3265632: Fix Errors for messing Enabled entity types and Safe tokens.
+ *
+ * On the URL aliases settings page.
+ */
+function varbase_seo_update_90001() {
+
+  // Get editable pathauto settings.
+  $pathauto_settings = \Drupal::service('config.factory')->getEditable('pathauto.settings');
+
+  // Add enable entity types if it was notin the pathauto settings in the active site configs.
+  $enabled_entity_types = $pathauto_settings->get('enabled_entity_types');
+  if (!isset($enabled_entity_types)
+    || (isset($enabled_entity_types) && is_array($enabled_entity_types) && !(count($enabled_entity_types) > 0))) {
+    $pathauto_settings->set('enabled_entity_types', ['user'])->save(TRUE);
+  }
+
+  // Add the list of safe tokens if it was not in the pathauto settings in the active site configs.
+  $safe_tokens = $pathauto_settings->get('safe_tokens');
+  if (!isset($safe_tokens)
+    || (isset($safe_tokens) && is_array($safe_tokens) && !(count($safe_tokens) > 0))) {
+
+    $safe_tokens = [
+      'alias',
+      'path',
+      'join-path',
+      'login-url',
+      'url',
+      'url-brief',
+    ];
+    $pathauto_settings->set('safe_tokens', $safe_tokens)->save(TRUE);
+  }
+
+}
+
+/**
+ * Issue #3272296: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase SEO module.
+ */
+function varbase_seo_update_90002() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_seo');
+}

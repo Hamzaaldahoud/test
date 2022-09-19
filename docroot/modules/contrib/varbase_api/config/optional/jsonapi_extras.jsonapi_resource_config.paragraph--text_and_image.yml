@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.text_and_image
+id: paragraph--text_and_image
+disabled: true
+path: paragraph/text_and_image
+resourceType: paragraph--text_and_image
+resourceFields: {}

@@ -1,0 +1,7 @@
+name: 'Default content tests'
+type: module
+hidden: TRUE
+description: 'Default content tests'
+package: Testing
+dependencies:
+  - default_content:default_content

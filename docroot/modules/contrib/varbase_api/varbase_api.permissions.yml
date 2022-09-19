@@ -1,0 +1,9 @@
+administer varbase api settings:
+  title: "Administer Varbase API settings"
+  description: "Access Varbase API settings and genrate keys page."
+access view json entity operation:
+  title: "Access View JSON entity operation"
+  description: "Access the View JSON entity operation"
+access view api docs entity operation:
+  title: "Access View API Docs entity operation"
+  description: "Access the View API Documentation entity operation"

@@ -1,0 +1,14 @@
+name: 'Media Bulk Upload: DropzoneJS'
+type: module
+description: Allows DropzoneJS integration with media bulk upload.
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Media
+dependencies:
+  - media_bulk_upload
+  - dropzonejs
+
+# Information added by Drupal.org packaging script on 2022-04-06
+version: '3.0.0'
+project: 'media_bulk_upload'
+datestamp: 1649251593

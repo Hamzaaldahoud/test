@@ -1,0 +1,17 @@
+name: "Varbase Heading block"
+description: "A heading block is used to add headings to your page or sections. Headings help structure your page making your content easier to read by humans and search engines."
+type: module
+package: "Varbase Blocks"
+core_version_requirement: ^9 || ^10
+dependencies:
+  - drupal:block
+  - drupal:block_content
+  - drupal:text
+  - drupal:field
+  - drupal:user
+  - drupal:options
+
+# Information added by Drupal.org packaging script on 2022-08-09
+version: '10.0.19'
+project: 'varbase_layout_builder'
+datestamp: 1660083829

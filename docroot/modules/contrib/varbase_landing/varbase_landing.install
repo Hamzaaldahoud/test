@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Varbase landing module.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_landing_install() {
+
+  // Processer for install: in varbase_landing.info.yml file using ModuleInstallerFactory.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_landing');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_landing', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_landing', '/^.*(settings.yml)$/i');
+
+  // --------------------------------------------------------------------------.
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3175817: Fix deprecated function getCurrentUserId replaced.
+ *
+ * By getDefaultEntityOwner in
+ * core.base_field_override.node.landing_page.uid config.
+ */
+function varbase_landing_update_8701() {
+  $config_factory = \Drupal::service('config.factory');
+  $node_uid_configs = $config_factory->listAll('core.base_field_override.node.');
+
+  // Update for core.base_field_override.node.landing_page.uid
+  // And all content types.
+  foreach ($node_uid_configs as $node_uid_config) {
+    if (substr($node_uid_config, -4) === ".uid") {
+
+      $node_uid_config_factory = $config_factory->getEditable($node_uid_config);
+      $default_value_callback = $node_uid_config_factory->get('default_value_callback');
+
+      if (isset($default_value_callback)
+        && !empty($default_value_callback)
+        && $default_value_callback === 'Drupal\node\Entity\Node::getCurrentUserId') {
+
+        $node_uid_config_factory->set('default_value_callback', 'Drupal\node\Entity\Node::getDefaultEntityOwner')->save(TRUE);
+      }
+    }
+  }
+
+}
+
+/**
+ * Issue #3272288: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Landing Page (Paragraphs) module.
+ */
+function varbase_landing_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_landing');
+}

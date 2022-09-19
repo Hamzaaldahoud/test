@@ -1,0 +1,9 @@
+entity_json: true
+bundle_docs: true
+auto_enabled_entity_types:
+  - media_type
+  - media
+  - node
+  - node_type
+  - taxonomy_term
+  - taxonomy_vocabulary

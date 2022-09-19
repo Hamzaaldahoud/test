@@ -1,0 +1,10 @@
+name: Maxlength
+type: module
+description: 'Sets a character limit and shows a character count on titles and text fields.'
+core_version_requirement: ^8.8 || ^9
+package: Fields
+
+# Information added by Drupal.org packaging script on 2022-07-31
+version: '2.0.0'
+project: 'maxlength'
+datestamp: 1659297560

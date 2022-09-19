@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.from_library
+id: paragraph--from_library
+disabled: true
+path: paragraph/from_library
+resourceType: paragraph--from_library
+resourceFields: {}

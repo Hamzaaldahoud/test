@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the varbase carousels.
+ */
+
+use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\InstallStorage;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Config\FileStorage;
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_carousels_install() {
+
+  // Processer for install: in varbase_carousels.info.yml file.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_carousels');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_carousels', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_carousels', '/^.*(settings.yml)$/i');
+
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function varbase_carousels_requirements($phase) {
+
+  $requirements = [];
+
+  $path = DRUPAL_ROOT . '/libraries/slick/slick/slick.min.js';
+
+  // Is the library found in the root libraries path.
+  $library_found = file_exists($path);
+
+  // If library is not found, then look in the current profile libraries path.
+  if (!$library_found) {
+    $profile_path = drupal_get_path('profile', \Drupal::installProfile());
+    $profile_path .= '/libraries/slick/slick/slick.min.js';
+    // Is the library found in the current profile libraries path.
+    $library_found = file_exists($profile_path);
+  }
+
+  if (!$library_found) {
+    $requirements['slick_library'] = [
+      'title' => t('Slick library missing'),
+      'description' => t('Varbase carousels requires the slick.min.js library.
+        Download it (https://github.com/kenwheeler/slick) and place it in the
+        libraries folder (/libraries)'),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  return $requirements;
+}
+
+/**
+ * Issue #3222166: Fix Entity Storage Exception on Column not found.
+ */
+function varbase_carousels_update_9001() {
+
+  // --------------------------------------------------------------------------.
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+  // Full flash and clear cash and rebuilding.
+  drupal_flush_all_caches();
+}

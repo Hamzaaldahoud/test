@@ -1,0 +1,51 @@
+{
+  "name": "drupal/total_control",
+  "description": "Total Control Administration Dashboard",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/total_control",
+  "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Jen Lampton",
+      "homepage": "https://www.drupal.org/u/jenlampton",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Mohammed J. Razem",
+      "homepage": "https://www.drupal.org/u/mohammed-j-razem",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Abdulla Abu-Zakham",
+      "homepage": "https://www.drupal.org/u/abu-zakham",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Rajab Natshah",
+      "homepage": "https://www.drupal.org/u/rajabnatshah",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/total_control",
+    "source": "https://git.drupalcode.org/project/total_control/tree/3.0.x"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
+  "require": {
+    "drupal/core": "~8.9 || ~9.0 || ~10.0",
+    "drupal/ctools": "~3.0 || ~4.0",
+    "drupal/panels": "~4.0",
+    "drupal/page_manager": "*"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-3.0.x": "3.0.x-dev"
+    }
+  }
+}

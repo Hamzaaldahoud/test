@@ -1,0 +1,98 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - content_kanban
+    - jsonapi_defaults
+third_party_settings:
+  jsonapi_defaults:
+    page_limit: 50
+id: content_kanban_log--content_kanban_log
+disabled: true
+path: content_kanban_log/content_kanban_log
+resourceType: content_kanban_log--content_kanban_log
+resourceFields:
+  id:
+    fieldName: id
+    publicName: id
+    enhancer:
+      id: ""
+    disabled: false
+  uuid:
+    fieldName: uuid
+    publicName: uuid
+    enhancer:
+      id: ""
+    disabled: false
+  langcode:
+    fieldName: langcode
+    publicName: langcode
+    enhancer:
+      id: ""
+    disabled: false
+  name:
+    fieldName: name
+    publicName: name
+    enhancer:
+      id: ""
+    disabled: false
+  entity_type:
+    fieldName: entity_type
+    publicName: entity_type
+    enhancer:
+      id: ""
+    disabled: false
+  entity_id:
+    fieldName: entity_id
+    publicName: entity_id
+    enhancer:
+      id: ""
+    disabled: false
+  user_id:
+    fieldName: user_id
+    publicName: user_id
+    enhancer:
+      id: ""
+    disabled: false
+  workflow_id:
+    fieldName: workflow_id
+    publicName: workflow_id
+    enhancer:
+      id: ""
+    disabled: false
+  state_from:
+    fieldName: state_from
+    publicName: state_from
+    enhancer:
+      id: ""
+    disabled: false
+  state_to:
+    fieldName: state_to
+    publicName: state_to
+    enhancer:
+      id: ""
+    disabled: false
+  status:
+    fieldName: status
+    publicName: status
+    enhancer:
+      id: ""
+    disabled: false
+  created:
+    fieldName: created
+    publicName: created
+    enhancer:
+      id: ""
+    disabled: false
+  changed:
+    fieldName: changed
+    publicName: changed
+    enhancer:
+      id: ""
+    disabled: false
+  metatag:
+    fieldName: metatag
+    publicName: metatag
+    enhancer:
+      id: ""
+    disabled: false

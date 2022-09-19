@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update for Varbase Workflow module.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_workflow_install() {
+
+  // Processer for install: in varbase_workflow.info.yml file using ModuleInstallerFactory.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_workflow');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_workflow', '/^.*(settings.yml)$/i');
+
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3157689: Fix default revision value for [ In review ] state to false.
+ *
+ * For the Editorial workflow.
+ */
+function varbase_workflow_update_82001() {
+  if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+    $config_factory = \Drupal::service('config.factory')->getEditable('workflows.workflow.varbase_editorial_workflow');
+    $type_settings = $config_factory->get('type_settings');
+    if (isset($type_settings)
+      && !empty($type_settings)
+      && isset($type_settings['states'])
+      && isset($type_settings['states']['review'])
+      && isset($type_settings['states']['review']['default_revision'])) {
+
+      $type_settings['states']['review']['default_revision'] = FALSE;
+      $config_factory->set('type_settings', $type_settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Issue #3272302: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Workflow module.
+ */
+function varbase_workflow_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_workflow');
+}

@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the block_content module.
+ */
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function block_content_update_last_removed() {
+  return 8600;
+}
+
+/**
+ * Update the block content entity type constraints.
+ */
+function block_content_update_8700() {
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type = $definition_update_manager->getEntityType('block_content');
+
+  $constraints = $entity_type->getConstraints();
+
+  unset($constraints['EntityChanged']);
+  $constraints['BlockContentEntityChanged'] = NULL;
+  $entity_type->setConstraints($constraints);
+
+  $definition_update_manager->updateEntityType($entity_type);
+}

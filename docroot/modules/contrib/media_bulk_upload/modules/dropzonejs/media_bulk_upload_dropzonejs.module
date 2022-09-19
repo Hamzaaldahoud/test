@@ -1,0 +1,60 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\FileInterface;
+
+/**
+ * Implements hook_media_bulk_upload_file_ids_alter().
+ *
+ * @param array $file_ids
+ * @param string $media_bulk_config_id
+ *
+ * @return void
+ */
+function media_bulk_upload_dropzonejs_media_bulk_upload_file_ids_alter(array &$file_ids, string $media_bulk_config_id) {
+  if (!isset($file_ids['uploaded_files'])) {
+    return;
+  }
+
+  $fileIds = [];
+  $fileStorage = \Drupal::entityTypeManager()->getStorage('file');
+
+  foreach ($file_ids['uploaded_files'] as $fileData) {
+    if (!is_array($fileData) || !isset($fileData['path'])) {
+      continue;
+    }
+
+    /** @var \Drupal\file\FileInterface $fileEntity */
+    $fileEntity = $fileStorage->create([
+      'uri' => $fileData['path'],
+      'uid' => \Drupal::currentUser()->id(),
+      'status' => FILE_STATUS_PERMANENT,
+      'filename' => $fileData['filename'],
+    ]);
+    $fileEntity->save();
+    $fileIds[] = $fileEntity->id();
+  }
+
+  if (!empty($fileIds)) {
+    $file_ids = $fileIds;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function media_bulk_upload_dropzonejs_form_media_bulk_upload_form_alter(
+  &$form,
+  FormStateInterface $form_state
+) {
+
+  $form['file_upload']['#type'] = 'dropzonejs';
+  $form['file_upload']['#disable_form_buttons'] = '.button.form-submit';
+  $form['file_upload']['#dropzone_description'] = new TranslatableMarkup('Click or drop your files here');
+
+  if (isset($form['file_upload']['#upload_validators']['file_validate_extensions'][0])) {
+    $form['file_upload']['#extensions'] = $form['file_upload']['#upload_validators']['file_validate_extensions'][0];
+  }
+}

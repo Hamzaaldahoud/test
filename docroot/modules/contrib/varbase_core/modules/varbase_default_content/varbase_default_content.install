@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Varbase Default content.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Drupal\path_alias\Entity\PathAlias;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_default_content_install() {
+
+  // ---------------------------------------------------------------------------
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+  // Set front page to "/node".
+  // Issue #3188641: Change the set front page to "/node" process from
+  // using static node id to front page path by the alias.
+  // https://www.drupal.org/project/varbase_core/issues/3188641
+  try {
+    $path_alias_query = \Drupal::entityQuery('path_alias');
+    $path_alias_query->condition('alias', '/node', '=');
+    $alias_ids = $path_alias_query->execute();
+
+    if (count($alias_ids) > 0) {
+      foreach ($alias_ids as $alias_id) {
+
+        if (!(end($alias_ids))) {
+          $path_alias = PathAlias::load($alias_id);
+          $path_alias->delete();
+        }
+        else {
+          $page_front_path = PathAlias::load($alias_id)->getPath();
+
+          \Drupal::configFactory()->getEditable('system.site')
+            ->set('page.front', $page_front_path)
+            ->save();
+        }
+      }
+    }
+  }
+  catch (\Exception $e) {
+    \Drupal::messenger()->addError($e->getMessage());
+  }
+
+  // Clear cached definitions.
+  \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+
+  \Drupal::service('plugin.manager.menu.contextual_link')->clearCachedDefinitions();
+  \Drupal::service('plugin.manager.menu.local_task')->clearCachedDefinitions();
+  \Drupal::service('plugin.manager.menu.local_action')->clearCachedDefinitions();
+
+  // Invalidating.
+  \Drupal::service('cache.menu')->invalidateAll();
+  \Drupal::service('cache.render')->invalidateAll();
+
+  // Rebuilding.
+  \Drupal::service('plugin.manager.menu.link')->rebuild();
+
+  // Rebuild permissions. The content access permissions need to be rebuilt.
+  node_access_rebuild();
+
+  // Rebuild the menu router based on all rebuilt data.
+  // Important: This rebuild must happen last, so the menu router is guaranteed
+  // to be based on up to date information.
+  \Drupal::service('router.builder')->rebuild();
+
+  // Resets all static caches.
+  drupal_static_reset();
+}

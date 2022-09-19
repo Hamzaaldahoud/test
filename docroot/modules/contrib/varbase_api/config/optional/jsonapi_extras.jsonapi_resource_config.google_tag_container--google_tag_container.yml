@@ -1,0 +1,159 @@
+uuid: e746ad49-1395-4814-9b3f-4e86f8266dad
+langcode: en
+status: true
+dependencies:
+  module:
+    - google_tag
+    - jsonapi_defaults
+third_party_settings:
+  jsonapi_defaults:
+    page_limit: 50
+id: google_tag_container--google_tag_container
+disabled: true
+path: google_tag_container/google_tag_container
+resourceType: google_tag_container--google_tag_container
+resourceFields:
+  uuid:
+    fieldName: uuid
+    publicName: uuid
+    enhancer:
+      id: ""
+    disabled: false
+  langcode:
+    fieldName: langcode
+    publicName: langcode
+    enhancer:
+      id: ""
+    disabled: false
+  status:
+    fieldName: status
+    publicName: status
+    enhancer:
+      id: ""
+    disabled: false
+  dependencies:
+    fieldName: dependencies
+    publicName: dependencies
+    enhancer:
+      id: ""
+    disabled: false
+  third_party_settings:
+    fieldName: third_party_settings
+    publicName: third_party_settings
+    enhancer:
+      id: ""
+    disabled: false
+  _core:
+    fieldName: _core
+    publicName: _core
+    enhancer:
+      id: ""
+    disabled: false
+  id:
+    fieldName: id
+    publicName: id
+    enhancer:
+      id: ""
+    disabled: false
+  label:
+    fieldName: label
+    publicName: label
+    enhancer:
+      id: ""
+    disabled: false
+  weight:
+    fieldName: weight
+    publicName: weight
+    enhancer:
+      id: ""
+    disabled: false
+  container_id:
+    fieldName: container_id
+    publicName: container_id
+    enhancer:
+      id: ""
+    disabled: false
+  data_layer:
+    fieldName: data_layer
+    publicName: data_layer
+    enhancer:
+      id: ""
+    disabled: false
+  include_classes:
+    fieldName: include_classes
+    publicName: include_classes
+    enhancer:
+      id: ""
+    disabled: false
+  whitelist_classes:
+    fieldName: whitelist_classes
+    publicName: whitelist_classes
+    enhancer:
+      id: ""
+    disabled: false
+  blacklist_classes:
+    fieldName: blacklist_classes
+    publicName: blacklist_classes
+    enhancer:
+      id: ""
+    disabled: false
+  include_environment:
+    fieldName: include_environment
+    publicName: include_environment
+    enhancer:
+      id: ""
+    disabled: false
+  environment_id:
+    fieldName: environment_id
+    publicName: environment_id
+    enhancer:
+      id: ""
+    disabled: false
+  environment_token:
+    fieldName: environment_token
+    publicName: environment_token
+    enhancer:
+      id: ""
+    disabled: false
+  path_toggle:
+    fieldName: path_toggle
+    publicName: path_toggle
+    enhancer:
+      id: ""
+    disabled: false
+  path_list:
+    fieldName: path_list
+    publicName: path_list
+    enhancer:
+      id: ""
+    disabled: false
+  role_toggle:
+    fieldName: role_toggle
+    publicName: role_toggle
+    enhancer:
+      id: ""
+    disabled: false
+  role_list:
+    fieldName: role_list
+    publicName: role_list
+    enhancer:
+      id: ""
+    disabled: false
+  status_toggle:
+    fieldName: status_toggle
+    publicName: status_toggle
+    enhancer:
+      id: ""
+    disabled: false
+  status_list:
+    fieldName: status_list
+    publicName: status_list
+    enhancer:
+      id: ""
+    disabled: false
+  conditions:
+    fieldName: conditions
+    publicName: conditions
+    enhancer:
+      id: ""
+    disabled: false

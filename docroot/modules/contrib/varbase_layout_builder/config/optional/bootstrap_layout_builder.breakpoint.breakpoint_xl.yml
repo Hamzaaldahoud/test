@@ -1,0 +1,7 @@
+langcode: en
+status: 0
+dependencies: {}
+id: breakpoint_xl
+label: "Extra large devices (Large desktops)"
+base_class: col-xl
+weight: "-10"

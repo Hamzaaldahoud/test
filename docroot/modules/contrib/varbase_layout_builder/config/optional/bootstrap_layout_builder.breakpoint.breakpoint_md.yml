@@ -1,0 +1,7 @@
+langcode: en
+status: 1
+dependencies: {}
+id: breakpoint_md
+label: "Medium devices (Tablets)"
+base_class: col-md
+weight: "-8"

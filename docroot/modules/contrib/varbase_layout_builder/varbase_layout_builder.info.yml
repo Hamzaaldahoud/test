@@ -1,0 +1,33 @@
+name: "Varbase Layout Builder"
+description: "Provides default configuration and enhancements to utilize Drupal core's Layout Builder."
+type: module
+package: Varbase
+configure: varbase_layout_builder.settings
+core_version_requirement: ^9 || ^10
+dependencies:
+  - drupal:system
+  - drupal:layout_builder
+  - varbase_media:varbase_media
+  - varbase_editor:varbase_editor
+  - layout_builder_restrictions:layout_builder_restrictions
+install:
+  - entity_block
+  - block_form_alter
+  - media_library_form_element
+  - bootstrap_layouts
+  - layout_builder_blocks
+  - layout_builder_modal
+  - layout_builder_block_sanitizer
+  - layout_builder_at
+  - layout_builder_component_attributes
+  - lb_ux
+  - layout_library
+  - section_library
+  - bootstrap_styles
+  - bootstrap_layout_builder
+  - block_library
+
+# Information added by Drupal.org packaging script on 2022-08-09
+version: '10.0.19'
+project: 'varbase_layout_builder'
+datestamp: 1660083829

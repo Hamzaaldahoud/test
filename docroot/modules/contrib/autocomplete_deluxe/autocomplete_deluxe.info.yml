@@ -1,0 +1,10 @@
+name: "Autocomplete Deluxe"
+type: module
+description: "Enhanced autocomplete using Jquery UI autocomplete."
+package: User interface
+core_version_requirement: ^8 || ^9
+
+# Information added by Drupal.org packaging script on 2022-04-12
+version: '2.0.2'
+project: 'autocomplete_deluxe'
+datestamp: 1649756532

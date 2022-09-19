@@ -1,0 +1,11 @@
+name: Checklist API
+type: module
+description: Provides an API for creating fillable, persistent checklists.
+package: Other
+core_version_requirement: ^9.3 || ^10
+configure: checklistapi.report
+
+# Information added by Drupal.org packaging script on 2022-07-29
+version: '2.1.1'
+project: 'checklistapi'
+datestamp: 1659116935

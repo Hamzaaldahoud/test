@@ -1,0 +1,42 @@
+{
+  "name": "vardot/varbase_carousels",
+  "description": "This feature provides the base implementation for the carousels in your website. Admins will be able to create carousels on the spot and place it anywhere in the site.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Vardot",
+      "homepage": "https://www.drupal.org/vardot",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "http://drupal.org/project/issues/varbase_carousels",
+    "source": "http://cgit.drupalcode.org/varbase_carousels"
+  },
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    },
+    "assets": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  },
+  "require": {
+    "composer/installers": "~2.0",
+    "oomphinc/composer-installers-extender": "~2.0",
+    "cweagans/composer-patches": "~1.0",
+    "drupal/core": "~9.0 || ~10.0",
+    "vardot/entity-definition-update-manager": "~1.0",
+    "vardot/module-installer-factory": "~1.0",
+    "drupal/varbase_media": "~9.0 || 9.0.x-dev",
+    "drupal/ctools": "~3.0 || ~4.0"
+  },
+  "extra": {
+    "enable-patching": true,
+    "composer-exit-on-patch-failure": true
+  }
+}

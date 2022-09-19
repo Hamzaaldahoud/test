@@ -1,0 +1,11 @@
+name: 'Media Library Edit'
+type: module
+description: 'Add an edit button to the Media Library widget when an item is selected.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: 'Media'
+
+# Information added by Drupal.org packaging script on 2022-05-25
+version: '8.x-2.3'
+project: 'media_library_edit'
+datestamp: 1653483534

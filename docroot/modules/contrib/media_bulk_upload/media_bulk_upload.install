@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Enable dropzonejs integration submodule.
+ */
+function media_bulk_upload_update_8001() {
+  $modules = array(
+    'media_bulk_upload_dropzonejs',
+  );
+  Drupal::service('module_installer')->install($modules);
+}

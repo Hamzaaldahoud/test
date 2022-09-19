@@ -1,0 +1,14 @@
+name: 'Content Planner'
+type: module
+description: 'Plan your content using a Dashboard, the Content Calendar and Content Kanban.'
+core_version_requirement: ^8 || ^9
+package: 'Content Planner'
+dependencies:
+  - drupal:image
+  - scheduler:scheduler
+  - drupal:content_moderation
+
+# Information added by Drupal.org packaging script on 2022-06-19
+version: '8.x-1.0-beta17'
+project: 'content_planner'
+datestamp: 1655631647

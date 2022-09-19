@@ -1,0 +1,15 @@
+.bs-bg-success {
+  background-color: green !important;
+}
+
+.bs-bg-warning {
+  background-color: yellow !important;
+}
+
+.bs-bg-danger {
+  background-color: red !important;
+}
+
+.bs-bg-light {
+  background-color: lightgray !important;
+}

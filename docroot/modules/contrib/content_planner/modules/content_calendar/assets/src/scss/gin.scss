@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+.gin--dark-mode .content-calendar {
+  .calendar-entry {
+    background-color: var(--colorGinLayer2Background);
+  }
+
+  .calendar-entry.unpublished {
+    color: var(--colorGinLayerBackground);
+    background-color: var(--colorGinDanger);
+  }
+
+  .disabled-day {
+    background: var(--colorGinDisabled);
+  }
+
+  .cell.today {
+    background: var(--colorGinInfoBackground);
+  }
+}

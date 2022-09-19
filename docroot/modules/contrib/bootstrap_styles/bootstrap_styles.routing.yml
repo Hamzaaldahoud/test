@@ -1,0 +1,7 @@
+bootstrap_styles.settings:
+  path: '/admin/config/bootstrap-styles/settings'
+  defaults:
+    _form: '\Drupal\bootstrap_styles\Form\SettingsForm'
+    _title: 'Bootstrap Styles Settings'
+  requirements:
+    _permission: 'configure bootstrap styles'

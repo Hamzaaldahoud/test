@@ -1,0 +1,76 @@
+{
+  "name": "drupal/varbase_api",
+  "description": "A JSON:API implementation with authentication and authorization that allows for easy ingestion of content by other applications.",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/varbase_editor",
+  "notification-url": "https://packages.drupal.org/8/downloads",
+  "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Vardot",
+      "homepage": "https://www.drupal.org/vardot",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/varbase_api",
+    "source": "http://cgit.drupalcode.org/varbase_api"
+  },
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    },
+    "assets": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  },
+  "require": {
+    "composer/installers": "~2.0",
+    "oomphinc/composer-installers-extender": "~2.0",
+    "cweagans/composer-patches": "~1.0",
+    "drupal/core": "~9.0 || ~10.0",
+    "vardot/entity-definition-update-manager": "~1.0",
+    "vardot/module-installer-factory": "~1.0",
+    "drupal/consumers": "~1.0",
+    "drupal/openapi": "~2.0",
+    "drupal/openapi_jsonapi": "3.0.2",
+    "drupal/openapi_rest": "~2.0",
+    "drupal/openapi_ui_redoc": "~1.0",
+    "drupal/openapi_ui_swagger": "~1.0",
+    "drupal/simple_oauth": "~5.0",
+    "drupal/schema_metatag": "~2.0",
+    "drupal/restui": "~1.0",
+    "drupal/jsonapi_extras": "~3.0"
+  },
+  "suggest": {
+    "swagger-api/swagger-ui": "~3.0: Provides the Swagger UI library which is a collection of HTML, Javascript, and CSS assets that dynamically generate beautiful documentation from a Swagger-compliant API."
+  },
+  "extra": {
+    "installer-types": [
+      "bower-asset",
+      "npm-asset"
+    ],
+    "drupal-libraries": {
+      "libraries": [
+        {"name": "swagger-ui", "package": "swagger-api/swagger-ui"}
+      ]
+    },
+    "enable-patching": true,
+    "composer-exit-on-patch-failure": true,
+    "patchLevel": {
+      "drupal/core": "-p2"
+    },
+    "patches": {
+      "drupal/openapi_jsonapi": {
+        "Issue #3185778: Fix TypeError: Cannot read property 'anyOf' of undefined":
+        "https://www.drupal.org/files/issues/2020-12-21/add_required_keyword_8.x_2.x-3185778-5.patch",
+        "Issue #3079209: Hide POST, PUT, and DELETE endpoints when JSON:API is configured to be read-only":
+        "https://www.drupal.org/files/issues/2020-12-21/only_add_read_route-methods_when_read_only_is_enabled_in_jsonapi_8.x_2.x-3079209-11.patch"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+name: 'Layout Builder Component Attributes'
+description: 'Allows editors to add HTML attributes to Layout Builder components (blocks)'
+package: 'Layout Builder'
+core_version_requirement: ^9 || ^10
+type: module
+
+dependencies:
+  - drupal:layout_builder
+
+configure: layout_builder_component_attributes.settings
+
+# Information added by Drupal.org packaging script on 2022-07-14
+version: '2.1.0'
+project: 'layout_builder_component_attributes'
+datestamp: 1657764628

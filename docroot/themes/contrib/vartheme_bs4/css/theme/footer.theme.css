@@ -1,0 +1,44 @@
+/* Insert your vartheme footer custom SASS styling. */
+.footer-wrapper {
+  margin-top: auto;
+  background-color: #f2f2f2;
+}
+.footer-wrapper .footer {
+  padding-top: 0;
+  padding-bottom: 0;
+  border: 0;
+}
+.footer-wrapper .footer section.region-footer {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+@media screen and (min-width: 992px) {
+  .footer-wrapper .footer section.region-footer {
+    flex-flow: row;
+  }
+}
+.footer-wrapper .footer section.region-footer div[id$=-copyright] {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding: 1rem 1rem 0 1rem;
+  font-size: 0.75rem;
+}
+.footer-wrapper .footer section.region-footer .menu--footer {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding: 1rem 0;
+  font-size: 0.75rem;
+}
+.footer-wrapper .footer section.region-footer .menu--footer ul.nav {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem 1rem 0 1rem;
+}
+.footer-wrapper .footer section.region-footer .menu--footer ul.nav li {
+  padding: 0 1rem;
+}

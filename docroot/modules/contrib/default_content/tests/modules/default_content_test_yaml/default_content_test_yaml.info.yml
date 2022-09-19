@@ -1,0 +1,7 @@
+name: 'Default content YAML tests'
+type: module
+hidden: TRUE
+description: 'Default content YAML tests'
+package: Testing
+dependencies:
+  - default_content:default_content

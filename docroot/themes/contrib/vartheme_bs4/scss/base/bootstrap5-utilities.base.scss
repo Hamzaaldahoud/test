@@ -1,0 +1,198 @@
+// Bootstrap Utilities 5 aliases for Bootstrap 4.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions"; // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";    // Bootstrap mixins.
+@import "../variables";                                // Vartheme variables.
+@import "../mixins";                                   // Vartheme mixins.
+// -----------------------------------------------------------------------------
+
+// Bootstrap Borders Utilities.
+// https://github.com/Vardot/bootstrap-borders-utilities
+// `yarn add bootstrap-borders-utilities` before compiling with `yarn theme:build`
+@import "../../node_modules/bootstrap-borders-utilities/utilities/scss/border-color-variants.scss";
+
+// Alias for .border-left BS4 class.
+.border-start {
+  border-left: $border-width $border-color !important;
+}
+
+// Alias for .border-left-0 BS4 class.
+.border-start-0 {
+  border-left: 0 !important;
+}
+
+// Alias for .border-right BS4 class.
+.border-end {
+  border-right: $border-width $border-color !important;
+}
+
+// Alias for .border-right-0 BS4 class.
+.border-end-0 {
+  border-right: 0 !important;
+}
+
+// Border widths.
+// ---------------------------------------------------------------
+.border-1 {
+  border-width: 1px !important;
+}
+
+.border-2 {
+  border-width: 2px !important;
+}
+
+.border-3 {
+  border-width: 3px !important;
+}
+
+.border-4 {
+  border-width: 4px !important;
+}
+
+.border-5 {
+  border-width: 5px !important;
+}
+
+// Rounded.
+// ---------------------------------------------------------------
+.rounded-1 {
+  border-radius: $border-radius-sm !important;
+}
+
+.rounded-2 {
+  border-radius: $border-radius !important;
+}
+
+.rounded-3 {
+  border-radius: $border-radius-lg !important;
+}
+
+// Alias for .rounded-left BS4 class.
+.rounded-start {
+  border-bottom-left-radius: $border-radius !important;
+  border-top-left-radius: $border-radius !important;
+}
+
+// Alias for .rounded-right BS4 class.
+.rounded-end {
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+
+// Alias for .text-left BS4 class.
+.text-start {
+  text-align: left !important;
+}
+
+// Alias for .text-right BS4 class.
+.text-end {
+  text-align: right !important;
+}
+
+[dir="rtl"] {
+  // RTL Alias for .text-left BS4 class.
+  .text-start {
+    text-align: right !important;
+  }
+  
+  // RTL Alias for .text-right BS4 class.
+  .text-end {
+    text-align: left !important;
+  }
+}
+
+// Alias for on Margin and Padding for .ml, .mr, .pl, .pr with .ms, .me, .ps, .pe classes.
+@each $breakpoint in map-keys($grid-breakpoints) {
+  @include media-breakpoint-up($breakpoint) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    @each $prop, $abbrev in (margin: m, padding: p) {
+      @each $size, $length in $spacers {
+        .#{$abbrev}e#{$infix}-#{$size} {
+          #{$prop}-right: $length !important;
+        }
+
+        .#{$abbrev}s#{$infix}-#{$size} {
+          #{$prop}-left: $length !important;
+        }
+      }
+    }
+
+    .me#{$infix}-auto {
+      margin-right: auto !important;
+    }
+    .ms#{$infix}-auto {
+      margin-left: auto !important;
+    }
+  }
+}
+
+[dir="rtl"] {
+  // RTL Alias for on Margin and Padding for .ml, .mr, .pl, .pr with .ms, .me, .ps, .pe classes.
+  @each $breakpoint in map-keys($grid-breakpoints) {
+    @include media-breakpoint-up($breakpoint) {
+      $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+      @each $size, $length in $spacers {
+        .me#{$infix}-#{$size} {
+          margin-right: 0 !important;
+          margin-left: $length !important;
+        }
+        .ms#{$infix}-#{$size} {
+          margin-right: $length !important;
+          margin-left: 0 !important;
+        }
+      }
+
+      @each $size, $length in $spacers {
+        .pe#{$infix}-#{$size} {
+          padding-right: 0 !important;
+          padding-left: $length !important;
+        }
+        .ps#{$infix}-#{$size} {
+          padding-right: $length !important;
+          padding-left: 0 !important;
+        }
+      }
+      .mr#{$infix}-auto {
+        margin-right: 0 !important;
+        margin-left: auto !important;
+      }
+      .ms#{$infix}-auto {
+        margin-right: auto !important;
+        margin-left: 0 !important;
+      }
+    }
+  }
+}
+
+// Gutters
+//
+// Make use of `.g-*`, `.gx-*` or `.gy-*` utilities to change spacing between the columns.
+
+$gutters: (
+  0: 0,
+  1: $grid-gutter-width * .25,
+  2: $grid-gutter-width * .5,
+  3: $grid-gutter-width,
+  4: $grid-gutter-width * 1.5,
+  5: $grid-gutter-width * 3,
+) !default;
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+  @each $key, $value in $gutters {
+    .g#{$infix}-#{$key},
+    .gx#{$infix}-#{$key} {
+      padding-left: #{$value};
+      padding-right: #{$value};
+    }
+
+    .g#{$infix}-#{$key},
+    .gy#{$infix}-#{$key} {
+      padding-top: #{$value};
+      padding-bottom: #{$value};
+    }
+  }
+}

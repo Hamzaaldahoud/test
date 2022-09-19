@@ -1,0 +1,264 @@
+<?php
+
+/**
+ * @file
+ * Contains varbase_layout_builder.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\block_content\BlockContentInterface;
+use Drupal\media\Entity\Media;
+use Drupal\media\MediaInterface;
+
+/**
+ * Implements hook_block_type_form_alter().
+ */
+function varbase_media_block_block_type_form_alter(array &$form, FormStateInterface &$form_state, string $block_type) {
+  if ($block_type == 'varbase_media_block') {
+    if (isset($form['field_media_view_mode'])
+        && isset($form['field_media_view_mode']['widget'])) {
+
+      $form['field_media_view_mode']['widget']['#options'] = _varbase_media_block_active_media_view_mode_options();
+    }
+
+    if (isset($form['field_media']) && isset($form['field_link'])) {
+      $form['#attached']['library'][] = 'core/drupal.states';
+      $form['field_media']['#after_build'][] = '_varbase_media_block_field_media_after_build';
+      $form['#after_build'][] = '_varbase_media_block_after_build';
+
+      $form['field_link']['#states'] = [
+        'visible' => [
+          ':input[name="settings[block_form][field_media][media_library_selection]"]' => ['value' => 'image'],
+        ],
+      ];
+    }
+  }
+}
+
+/**
+ * After build callback for media field element in the Varbase Media Block form.
+ *
+ * @param array $element
+ *   Element definition for the Varbase Media Block field_media field.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state of the Varbase Media Block form.
+ *
+ * @return array
+ *   The updated element.
+ */
+function _varbase_media_block_field_media_after_build(array $element, FormStateInterface $form_state): array {
+
+  if (isset($element['widget'])
+    && isset($element['widget']['media_library_selection'])
+    && isset($element['widget']['media_library_selection']['#value'])) {
+
+    $media_id = $element['widget']['media_library_selection']['#value'];
+
+    if ($media_id) {
+      $media = Media::load($media_id);
+      if ($media) {
+        $element['widget']['media_library_selection']['#attributes']['value'] = $media->bundle();
+      }
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * After build callback in the Varbase Media Block form.
+ *
+ * @param array $form
+ *   Form definition for the Varbase Media Block form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state of the Varbase Media Block form.
+ *
+ * @return array
+ *   The updated form.
+ */
+function _varbase_media_block_after_build(array $form, FormStateInterface $form_state): array {
+
+  if (isset($form['field_media']['widget'])
+    && isset($form['field_media']['widget']['selection'])
+    && isset($form['field_media']['widget']['selection'][0])
+    && isset($form['field_media']['widget']['selection'][0]['target_id'])
+    && isset($form['field_media']['widget']['selection'][0]['target_id']['#value'])) {
+
+    $media_id = $form['field_media']['widget']['selection'][0]['target_id']['#value'];
+
+    if ($media_id) {
+      $media = Media::load($media_id);
+      if ($media) {
+        $form['field_media']['widget']['media_library_selection']['#attributes']['value'] = $media->bundle();
+      }
+    }
+  }
+
+  return $form;
+}
+
+/**
+ * Get active media view mode options.
+ */
+function _varbase_media_block_active_media_view_mode_options() {
+  $media_view_mode_options = \Drupal::service('entity_display.repository')->getViewModes('media');
+
+  $ignore_view_mode_list = [
+    'media.token',
+    'media.slick',
+    'media.media_library',
+    'media.background_media',
+    'media.browser_teaser',
+    'media.field_preview',
+    'media.varbase_media_hero_slider',
+    '_none',
+  ];
+
+  foreach ($media_view_mode_options as $media_view_mode_option) {
+    if ($media_view_mode_option['status'] == TRUE
+        && !in_array($media_view_mode_option['id'], $ignore_view_mode_list)) {
+
+      $active_media_view_mode_options[$media_view_mode_option['id']] = $media_view_mode_option['label'];
+    }
+  }
+
+  return $active_media_view_mode_options;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function varbase_media_block_theme($existing, $type, $theme, $path) {
+
+  $templates = $path . '/templates';
+  $theme_templates = [];
+
+  $theme_templates['block__inline_block__varbase_media_block'] = [
+    'template' => 'block--inline-block--varbase-media-block',
+    'path' => $templates,
+    'base hook' => 'block',
+  ];
+
+  $theme_templates['block__block_content__varbase_media_block'] = [
+    'template' => 'block--block-content--varbase-media-block',
+    'path' => $templates,
+    'base hook' => 'block',
+  ];
+
+  return $theme_templates;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function varbase_media_block_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+
+  if (isset($variables['elements']['content']['#block_content'])
+      && $variables['elements']['content']['#block_content']->bundle() == 'varbase_media_block'
+      && $variables['elements']['content']['#block_content'] instanceof BlockContentInterface) {
+
+    $block_type_suggestion = 'block__block_content__varbase_media_block';
+    $suggestions_rev = array_reverse($suggestions);
+    $index = array_search('block__block_content', $suggestions_rev);
+    if (is_numeric($index)) {
+      array_splice($suggestions_rev, $index, 0, $block_type_suggestion);
+      $suggestions = array_reverse($suggestions_rev);
+    }
+    else {
+      $suggestions[] = $block_type_suggestion;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function varbase_media_block_preprocess_block(&$variables) {
+
+  if (isset($variables['content']['field_media'])
+      && isset($variables['content']['field_media_view_mode'])) {
+
+    $block_field_media = $variables['content']['#block_content']->get('field_media');
+    $block_field_media_view_mode = $variables['content']['#block_content']->get('field_media_view_mode');
+
+    $media_id = $block_field_media->first()->getValue()['target_id'];
+    $media = Media::load($media_id);
+
+    if ($media instanceof MediaInterface
+      && isset($block_field_media_view_mode)
+      && $block_field_media_view_mode->first() !== NULL) {
+
+      $media_view_mode = $block_field_media_view_mode->first()
+        ->getValue()['target_id'];
+      $media_view_mode = str_replace('media.', '', $media_view_mode);
+
+      $view_builder = \Drupal::entityTypeManager()
+        ->getViewBuilder($media->getEntityTypeId());
+
+      // Get the media with the selected media view mode.
+      $variables['content']['field_media'] = $view_builder->view($media, $media_view_mode);
+
+      // Assign the filed_link as media_link.
+      if ($media->bundle() == 'image'
+        && isset($variables['content']['field_link'])) {
+        $variables['media_link'] = $variables['content']['field_link'];
+      }
+
+    }
+
+    // Unset the media view mode field. Not to render it out in the template.
+    if (isset($variables['content']['field_media_view_mode'])) {
+      unset($variables['content']['field_media_view_mode']);
+    }
+
+    // Unset the link field. Not to render it out in the template.
+    if (isset($variables['content']['field_link'])) {
+      unset($variables['content']['field_link']);
+    }
+
+  }
+  elseif (isset($variables['content']['content']['field_media'])
+      && isset($variables['content']['content']['field_media_view_mode'])) {
+
+    $block_field_media = $variables['content']['content']['#block_content']->get('field_media');
+    $block_field_media_view_mode = $variables['content']['content']['#block_content']->get('field_media_view_mode');
+
+    if (isset($block_field_media)
+      && $block_field_media->first() !== NULL) {
+
+      $media_id = $block_field_media->first()->getValue()['target_id'];
+      $media = Media::load($media_id);
+
+      if ($media instanceof MediaInterface
+        && isset($block_field_media_view_mode)
+        && $block_field_media_view_mode->first() !== NULL) {
+
+        $media_view_mode = $block_field_media_view_mode->first()->getValue()['target_id'];
+        $media_view_mode = str_replace('media.', '', $media_view_mode);
+
+        $view_builder = \Drupal::entityTypeManager()->getViewBuilder($media->getEntityTypeId());
+
+        // Get the media with the selected media view mode.
+        $variables['content']['content']['field_media'] = $view_builder->view($media, $media_view_mode);
+
+        // Assign the filed_link as media_link.
+        if ($media->bundle() == 'image'
+          && isset($variables['content']['content']['field_link'])) {
+          $variables['media_link'] = $variables['content']['content']['field_link'];
+        }
+
+      }
+    }
+
+    // Unset the media view mode field. Not to render it out in the template.
+    if (isset($variables['content']['content']['field_media_view_mode'])) {
+      unset($variables['content']['content']['field_media_view_mode']);
+    }
+
+    // Unset the link field.  Not to render it out in the template.
+    if (isset($variables['content']['content']['field_link'])) {
+      unset($variables['content']['content']['field_link']);
+    }
+  }
+
+}

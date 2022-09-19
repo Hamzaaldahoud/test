@@ -1,0 +1,14 @@
+.gin--dark-mode .content-calendar .calendar-entry {
+  background-color: var(--colorGinLayer2Background); }
+
+.gin--dark-mode .content-calendar .calendar-entry.unpublished {
+  color: var(--colorGinLayerBackground);
+  background-color: var(--colorGinDanger); }
+
+.gin--dark-mode .content-calendar .disabled-day {
+  background: var(--colorGinDisabled); }
+
+.gin--dark-mode .content-calendar .cell.today {
+  background: var(--colorGinInfoBackground); }
+
+/*# sourceMappingURL=gin.css.map */

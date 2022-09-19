@@ -1,0 +1,7 @@
+langcode: en
+status: 1
+dependencies: {}
+id: breakpoint_lg
+label: "Large devices (Desktops)"
+base_class: col-lg
+weight: "-9"

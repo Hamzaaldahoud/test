@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update for Varbase Internationalization module.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_internationalization_install() {
+
+  // Processer for install: in varbase_internationalization.info.yml file using ModuleInstallerFactory.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_internationalization');
+
+  // ---------------------------------------------------------------------------
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3032661: Changed [Varbase Internationalization] not to use.
+ *
+ * The [Localization client] module by disabling it for old sites and not to
+ * install it in new Varbase installations.
+ */
+function varbase_internationalization_update_86001() {
+
+  if (\Drupal::moduleHandler()->moduleExists('l10n_client_ui')) {
+    \Drupal::service('module_installer')->uninstall(['l10n_client_ui'], FALSE);
+  }
+}
+
+/**
+ * Issue #3270834: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Internationalization module.
+ */
+function varbase_internationalization_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_internationalization');
+}

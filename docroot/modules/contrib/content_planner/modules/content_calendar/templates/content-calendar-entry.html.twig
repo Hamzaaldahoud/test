@@ -1,0 +1,34 @@
+<div class="calendar-entry{% if node.editoptions %} draggable{% endif %}{% if not node.status %} unpublished{% endif %}" data-nid="{{ node.nid }}" style="{% if node_type_config.color %}border: 1px solid {{ node_type_config.color }}; color: {{ node_type_config.color }};{% endif %} {% if not node.status and options.bg_color_unpublished_content %}background-color: {{ options.bg_color_unpublished_content }};{% endif %}">
+
+
+  <div class="user-info">
+    {% if user_picture %}
+      <span class="user-picture"><img src="{{ user_picture }}" alt="{{ node.username }}" /></span>
+    {% endif %}
+    {#<span class="username">{{ node.username }}</span>#}
+  </div>
+  <span class="node-type-label">{{ node_type_config.label }}</span>
+  <span class="node-title"><a href="{{ path('entity.node.canonical', {'node': node.nid}) }}">{{ node.title }}</a></span>
+  <div class="state-and-publication">
+
+    <span class="workflow-state">{{ workflow_state }}</span>
+
+
+    
+    <span class="created-on">
+      {% if node.scheduled %}
+        <img src="/modules/contrib/content_planner/modules/content_calendar/assets/dist/images/scheduled.svg">
+      {% endif %}
+      {{ node.created_on_time }}
+    </span>
+  </div>
+
+  {% if node.editoptions %}
+  <ul class="node-actions">
+    <li><a class="node-action node-edit-link" href="{{ path('entity.node.edit_form', {'node': node.nid}) }}?destination={{ path('content_calendar.calendar_redirect', {'month': month, 'year': year}) }}" title="{{ "Edit"|t }}">{{ "Edit"|t }}</a></li>
+    <li><a class="node-action node-delete-link" href="{{ path('entity.node.delete_form', {'node': node.nid}) }}?destination={{ path('content_calendar.calendar_redirect', {'month': month, 'year': year}) }}" title="{{ "Delete"|t }}">{{ "Delete"|t }}</a></li>
+    <!--<li><a class="node-action node-duplicate-link" href="{{ path('content_calendar.duplicate_node', {'node': node.nid}) }}?destination={{ path('content_calendar.calendar_redirect', {'month': month, 'year': year}) }}" title="{{ "Duplicate"|t }}">{{ "Duplicate"|t }}</a></li>-->
+  </ul>
+  {% endif %}
+
+</div>

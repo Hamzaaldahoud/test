@@ -1,0 +1,8 @@
+enable: true
+address: dev-catchall@vardot.com
+roles: {}
+allowed: "*@vardot.com"
+description: true
+message: true
+mailkeys: ""
+mailkeys_skip: ""

@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Varbase Media block.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_media_block_install() {
+
+  // Processer for install: in varbase_media_block.info.yml file.
+  // --------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_media_block');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_media_block', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_media_block', '/^.*(settings.yml)$/i');
+
+  // --------------------------------------------------------------------------.
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3284568: Hide media (image/video) field link title input.
+ */
+function varbase_media_block_update_90001() {
+  $block_content_field_link = \Drupal::service('config.factory')->getEditable('field.field.block_content.varbase_media_block.field_link');
+  $block_content_field_link_title = $block_content_field_link->get('settings.title');
+
+  if ($block_content_field_link_title === 1) {
+    $block_content_field_link->set('settings.title', 0)->save(TRUE);
+  }
+}

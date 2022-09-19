@@ -1,0 +1,13 @@
+name: Checklist API Example
+type: module
+description: Provides an example implementation of the Checklist API.
+package: Example modules
+core_version_requirement: ^9.3 || ^10
+dependencies:
+  - drupal:checklistapi
+configure: checklistapi.checklists.example_checklist
+
+# Information added by Drupal.org packaging script on 2022-07-29
+version: '2.1.1'
+project: 'checklistapi'
+datestamp: 1659116935

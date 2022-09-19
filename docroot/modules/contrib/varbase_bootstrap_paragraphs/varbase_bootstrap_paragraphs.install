@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Install, uninstall and update hooks for Varbase Boostrap Paragraphs module.
+ */
+
+use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\InstallStorage;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Config\FileStorage;
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_bootstrap_paragraphs_install() {
+
+  // Processer for install: in varbase_bootstrap_paragraphs.info.yml file.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_bootstrap_paragraphs');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_bootstrap_paragraphs', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_bootstrap_paragraphs', '/^.*(settings.yml)$/i');
+
+  // Import Paragraph Libraray OPTIONAL configs after the custom install.
+  $paragraph_libraray_configs = [
+    'views.view.paragraphs_library_browser',
+    'entity_browser.browser.paragraphs_library_items',
+  ];
+
+  ModuleInstallerFactory::importConfigsFromList('paragraphs_library', $paragraph_libraray_configs, InstallStorage::CONFIG_OPTIONAL_DIRECTORY);
+
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Issue #3272278: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Bootstrap Paragraphs module
+ */
+function varbase_bootstrap_paragraphs_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_bootstrap_paragraphs');
+}

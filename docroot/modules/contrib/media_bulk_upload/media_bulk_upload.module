@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Contains media_upload.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\media\MediaTypeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function media_bulk_upload_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the media_upload module.
+    case 'help.page.media_bulk_upload':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Allows uploading files in bulk and converting them to media entities.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_menu_links_discovered_alter().
+ */
+function media_bulk_upload_menu_links_discovered_alter(&$links) {
+  if (isset($links['admin_toolbar_tools.extra_links:media_page'])) {
+    /*
+     * Add the menu link under the "Content" > "Media" menu item if the "Admin Toolbar Extra Tools" module is enabled.
+     * @see \Drupal\admin_toolbar_tools\Plugin\Derivative\ExtraLinks::getDerivativeDefinitions()
+     */
+    $links['entity.media_bulk.collection']['parent'] = 'admin_toolbar_tools.extra_links:media_page';
+  }
+}

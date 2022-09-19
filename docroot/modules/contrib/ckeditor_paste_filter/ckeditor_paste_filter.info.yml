@@ -1,0 +1,12 @@
+name: CKeditor Paste Filter
+type: module
+description: Extra plugins for ckeditor. Filter text pasted into editor.
+package: CKEditor
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:ckeditor
+
+# Information added by Drupal.org packaging script on 2022-03-03
+version: '1.0.1'
+project: 'ckeditor_paste_filter'
+datestamp: 1646351039

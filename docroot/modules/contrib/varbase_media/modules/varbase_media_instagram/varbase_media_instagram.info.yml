@@ -1,0 +1,14 @@
+name: "Varbase Media Instagram"
+description: "Manages default config for Instagram media type."
+type: module
+package: Varbase
+core_version_requirement: ^9 || ^10
+dependencies:
+  - varbase_media:varbase_media
+  - media_entity_instagram:media_entity_instagram
+  - varbase_media:entity_browser_generic_embed
+
+# Information added by Drupal.org packaging script on 2022-08-09
+version: '9.0.13'
+project: 'varbase_media'
+datestamp: 1660084634

@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update for Varbase webform module.
+ */
+
+use Vardot\Entity\EntityDefinitionUpdateManager;
+use Vardot\Installer\ModuleInstallerFactory;
+
+/**
+ * Implements hook_install().
+ */
+function varbase_webform_install() {
+
+  // Processer for install: in varbase_webform.info.yml file using ModuleInstallerFactory.
+  // ---------------------------------------------------------------------------.
+  ModuleInstallerFactory::installList('varbase_webform');
+
+  // Install optional configs.
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_webform', '/^field.storage.*\\.(yml)$/i');
+  ModuleInstallerFactory::importConfigsFromScanedDirectory('varbase_webform', '/^.*(settings.yml)$/i');
+
+  // ---------------------------------------------------------------------------
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+}
+
+/**
+ * Enable [Webform Analysis] module.
+ */
+function varbase_webform_update_8601() {
+  // If (!\Drupal::moduleHandler()->moduleExists('webform_analysis')) {
+  // \Drupal::service('module_installer')->install(['webform_analysis'], TRUE);
+  // }.
+}
+
+/**
+ * Enable [Webform Views Integration] module.
+ */
+function varbase_webform_update_8602() {
+  if (!\Drupal::moduleHandler()->moduleExists('webform_views')) {
+    \Drupal::service('module_installer')->install(['webform_views'], TRUE);
+  }
+}
+
+/**
+ * Issue #3270834: Switch to use the Module Installer Factory.
+ *
+ * In the Varbase Webform module.
+ */
+function varbase_webform_update_90001() {
+  // Set the weight of the module after installation of list of modules.
+  // To make sure that any hook or event subscriber workes after all used modules.
+  ModuleInstallerFactory::setModuleWeightAfterInstallation('varbase_webform');
+}

@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - responsive_preview
+id: responsive_preview_device--responsive_preview_device
+disabled: true
+path: responsive_preview_device/responsive_preview_device
+resourceType: responsive_preview_device--responsive_preview_device
+resourceFields:
+  id:
+    fieldName: id
+    publicName: id
+    enhancer:
+      id: ""
+    disabled: false
+  type:
+    fieldName: type
+    publicName: type
+    enhancer:
+      id: ""
+    disabled: false
+  uuid:
+    fieldName: uuid
+    publicName: uuid
+    enhancer:
+      id: ""
+    disabled: false
+  _core:
+    fieldName: _core
+    publicName: _core
+    enhancer:
+      id: ""
+    disabled: false
