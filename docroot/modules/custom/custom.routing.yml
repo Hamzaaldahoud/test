@@ -5,3 +5,10 @@ custom.welcome:
     _title: 'Welcome to My Module in Drupal 9'
   requirements: 
     _permission: 'access content'
+custom.RegistrationForm:
+  path: '/first-form'
+  defaults:
+    _form: '\Drupal\custom\Form\RegistrationForm'
+    _title: 'WFirst form
+  requirements: 
+    _permission: 'access content'
