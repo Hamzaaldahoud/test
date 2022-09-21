@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  theme:
+    - new_theme
+id: new_theme_local_actions
+theme: new_theme
+region: header
+weight: -3
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: "Primary admin actions"
+  provider: core
+  label_display: "0"
+visibility: {}

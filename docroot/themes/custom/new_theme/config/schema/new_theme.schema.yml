@@ -1,0 +1,4 @@
+# Schema for the configuration files of the new_theme.
+new_theme.settings:
+  type: vartheme_bs4.settings
+  label: "new_theme settings"

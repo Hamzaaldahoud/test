@@ -1,0 +1,13 @@
+name: 'Translation Language abilities'
+description: 'Provides a field that allows users to select language combinations.'
+package: 'Translation Management'
+core_version_requirement: ^9.3 || ^10
+type: module
+
+dependencies:
+  - drupal:language
+
+# Information added by Drupal.org packaging script on 2022-07-07
+version: '8.x-1.14'
+project: 'tmgmt'
+datestamp: 1657223866

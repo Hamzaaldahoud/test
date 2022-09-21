@@ -1,0 +1,17 @@
+// new_theme Maintenance page custom style.
+// -----------------------------------------------------------------------------
+@import "../../node_modules/bootstrap/scss/functions";  // Bootstrap functions.
+@import "../../node_modules/bootstrap/scss/mixins";     // Bootstrap mixins.
+@import "../variables";                   // new_theme variables.
+@import "../mixins";                      // new_theme mixins.
+// -----------------------------------------------------------------------------
+
+/* Insert your new_theme maintenance page custom SASS styling. */
+
+.maintenance-page {
+  footer {
+    .footer-credits {
+      @include font-size(0.75rem);
+    }
+  }
+}

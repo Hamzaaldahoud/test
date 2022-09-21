@@ -32,11 +32,13 @@
     "drupal/core-project-message": "^9",
     "webflo/drupal-finder": "~1.0",
     "vardot/varbase": "~9.0",
-    "vardot/varbase-updater": "~2.0"
+    "vardot/varbase-updater": "~2.0",
+    "drupal/tmgmt": "^1.14",
+    "drupal/devel": "^4.1"
   },
   "require-dev": {
     "drupal/core-dev": "~9.0",
-    "drush/drush": "~11.0"
+    "drush/drush": "^11.1"
   },
   "config": {
     "bin-dir": "bin/",
